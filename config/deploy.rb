@@ -15,6 +15,8 @@ set :log_level, :debug
 
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 # set :keep_releases, 5
+#
+set :bundle_flags, "--deployment"
 
 namespace :deploy do
 
@@ -23,8 +25,14 @@ namespace :deploy do
     on roles(:app), in: :sequence, wait: 5 do
       # Your restart mechanism here, for example:
       # execute :touch, release_path.join('tmp/restart.txt')
+      execute "/etc/init.d/nginx restart"
+      within current_path do
+        execute "bundle exec unicorn -c current/unicorn.rb -E production -D"
+      end
     end
   end
+
+  after "deploy:finished", "deploy:restart"
 
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
