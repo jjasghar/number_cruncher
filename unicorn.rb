@@ -3,7 +3,7 @@
 @dir = "/var/www/number_cruncher/"
 
 worker_processes 2
-working_directory @dir
+working_directory "#{@dir}current"
 
 timeout 30
 

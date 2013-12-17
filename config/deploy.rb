@@ -17,6 +17,7 @@ set :log_level, :debug
 # set :keep_releases, 5
 #
 set :bundle_flags, "--deployment"
+set :bundle_bins, fetch(:bundle_bins).push("unicorn")
 
 namespace :deploy do
 
@@ -27,7 +28,7 @@ namespace :deploy do
       # execute :touch, release_path.join('tmp/restart.txt')
       execute "/etc/init.d/nginx restart"
       within current_path do
-        execute "bundle exec unicorn -c current/unicorn.rb -E production -D"
+        execute :unicorn, "-c unicorn.rb -E production -D"
       end
     end
   end
